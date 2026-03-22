@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # PostgreSQL数据库
+  db:
+    image: postgres:15-alpine
+    container_name: jp_disclosure_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jp_disclosure
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # Redis缓存（可选）
+  redis:
+    image: redis:7-alpine
+    container_name: jp_disclosure_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  # FastAPI后端
+  backend:
+    build: ./backend
+    container_name: jp_disclosure_backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/jp_disclosure
+      - REDIS_URL=redis://redis:6379/0
+      - EDINET_API_KEY=${EDINET_API_KEY:-Demo}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+    command: >
+      sh -c "
+        python scripts/init_db.py &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+  # Next.js前端
+  frontend:
+    build: ./frontend
+    container_name: jp_disclosure_frontend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_BASE_URL=http://localhost:3000
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  # 定时任务 - 每天获取EDINET数据
+  scheduler:
+    build: ./backend
+    container_name: jp_disclosure_scheduler
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/jp_disclosure
+      - EDINET_API_KEY=${EDINET_API_KEY:-Demo}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+    command: >
+      sh -c "
+        echo '0 9,17 * * * cd /app && python scripts/fetch_edinet.py' > /etc/crontabs/root &&
+        crond -f -l 2
+      "
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge

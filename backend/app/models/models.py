@@ -2,11 +2,9 @@
 数据库模型定义
 """
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, Text, Index, Boolean
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 from datetime import datetime
-
-Base = declarative_base()
+from app.core.database import Base
 
 
 class Company(Base):

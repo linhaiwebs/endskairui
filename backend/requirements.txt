@@ -1,0 +1,25 @@
+# FastAPI核心依赖
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.3
+pydantic-settings>=2.1.0
+
+# 数据库
+sqlalchemy>=2.0.25
+alembic>=1.13.1
+# Windows兼容：优先使用psycopg2-binary，如果失败可尝试psycopg (v3)
+psycopg2-binary>=2.9.9
+
+# HTTP客户端
+httpx>=0.26.0
+
+# EDINET数据获取
+edinet-tools>=0.2.0
+
+# 工具库
+python-dotenv>=1.0.0
+python-dateutil>=2.8.2
+
+# 可选依赖（Windows可能不需要）
+# redis>=5.0.1  # 如果不需要缓存可以注释掉
+# celery>=5.3.6  # Windows不支持某些Unix特性，建议移除或使用替代方案

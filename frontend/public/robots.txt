@@ -1,9 +1,24 @@
-# https://www.robotstxt.org/robotstxt.html
+# robots.txt for JP Disclosure Platform
+# 日本上市公司信息披露平台
+
+# 允许所有爬虫访问
 User-agent: *
 Allow: /
 
-# Sitemap
+# 禁止访问的路径
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Sitemap位置
 Sitemap: https://jp-disclosure.com/sitemap.xml
 
-# 禁止访问API路径
-Disallow: /api/
+# 爬虫延迟（秒）- 避免对服务器造成过大压力
+Crawl-delay: 1
+
+# 特殊规则：Google和Bing可以更快地爬取
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot
+Crawl-delay: 0

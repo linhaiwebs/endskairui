@@ -1,5 +1,6 @@
 @echo off
-REM Windows快速启动脚本
+chcp 65001 >nul
+setlocal enabledelayedexpansion
 
 echo ========================================
 echo 日本上市公司信息披露平台 - 启动服务
@@ -15,7 +16,13 @@ if not exist "venv" (
 )
 
 REM 激活虚拟环境
-call venv\Scripts\activate.bat
+if exist "venv\Scripts\activate.bat" (
+    call venv\Scripts\activate.bat
+) else (
+    echo 错误：虚拟环境激活脚本不存在
+    pause
+    exit /b 1
+)
 
 REM 检查.env文件
 if not exist ".env" (
@@ -23,6 +30,15 @@ if not exist ".env" (
     echo 正在使用默认配置...
     echo 请复制 .env.windows 为 .env 并修改配置
     echo.
+)
+
+REM 检查uvicorn是否安装
+where uvicorn >nul 2>&1
+if errorlevel 1 (
+    echo 错误：未找到uvicorn命令
+    echo 请确认虚拟环境已正确激活
+    pause
+    exit /b 1
 )
 
 REM 启动服务

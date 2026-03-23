@@ -1,0 +1,27 @@
+# Windows环境专用依赖文件
+# 针对Windows平台优化的依赖配置
+
+# FastAPI核心依赖
+fastapi>=0.109.0
+uvicorn>=0.27.0
+pydantic>=2.5.3
+pydantic-settings>=2.1.0
+
+# 数据库
+sqlalchemy>=2.0.25
+alembic>=1.13.1
+# Windows推荐使用psycopg (v3)而不是psycopg2
+psycopg[binary,pool]>=3.1.0
+
+# HTTP客户端
+httpx>=0.26.0
+
+# EDINET数据获取（如果安装失败，可以跳过）
+# edinet-tools>=0.2.0
+
+# 工具库
+python-dotenv>=1.0.0
+python-dateutil>=2.8.2
+
+# Windows替代方案：使用内置的asyncio而不是celery
+# 不需要redis和celery

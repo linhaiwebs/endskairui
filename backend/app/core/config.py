@@ -10,8 +10,9 @@ class Settings(BaseSettings):
     # 数据库配置
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/jp_disclosure"
     
-    # Redis配置（可选）
-    REDIS_URL: Optional[str] = "redis://localhost:6379/0"
+    # Redis配置（可选，Windows环境可以禁用）
+    REDIS_URL: Optional[str] = None
+    USE_REDIS: bool = False  # 默认不使用Redis
     
     # API配置
     API_V1_STR: str = "/api/v1"

@@ -9,7 +9,7 @@ import logging
 
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.api import disclosures, stocks
+from app.api import disclosures, stocks, stats
 
 # 配置日志
 logging.basicConfig(
@@ -88,6 +88,11 @@ app.include_router(
 
 app.include_router(
     stocks.router,
+    prefix=settings.API_V1_STR
+)
+
+app.include_router(
+    stats.router,
     prefix=settings.API_V1_STR
 )
 

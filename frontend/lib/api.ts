@@ -112,6 +112,22 @@ class APIClient {
   }
 }
 
+  // 统计相关
+  stats = {
+    getOverview: async (): Promise<any> => {
+      return this.fetch<any>('/api/v1/stats/overview')
+    },
+
+    getDaily: async (days: number = 7): Promise<any> => {
+      return this.fetch<any>(`/api/v1/stats/daily?days=${days}`)
+    },
+
+    getHotCompanies: async (limit: number = 10): Promise<any[]> => {
+      return this.fetch<any[]>(`/api/v1/stats/hot-companies?limit=${limit}`)
+    },
+  }
+}
+
 // 导出单例实例
 export const apiClient = new APIClient(API_BASE_URL)
 
@@ -142,4 +158,10 @@ export const companyAPI = {
     apiClient.companies.getIndustries(),
   getMarkets: () => 
     apiClient.companies.getMarkets(),
+}
+
+export const statsAPI = {
+  getOverview: () => apiClient.stats.getOverview(),
+  getDaily: (days?: number) => apiClient.stats.getDaily(days),
+  getHotCompanies: (limit?: number) => apiClient.stats.getHotCompanies(limit),
 }

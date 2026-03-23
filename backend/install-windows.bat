@@ -99,6 +99,6 @@ echo    DATABASE_URL=postgresql://postgres:password@localhost:5432/jp_disclosure
 echo 4. 初始化数据库：python scripts\init_db.py
 echo 5. 启动服务：run start-windows.bat 或 uvicorn app.main:app --reload
 echo.
-echo 详细说明请查看：WINDOWS_INSTALL.md
+echo 详细说明请查看：README.md
 echo.
 pause

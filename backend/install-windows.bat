@@ -7,8 +7,8 @@ echo JP Disclosure Platform - Windows Install
 echo ========================================
 echo.
 
-REM Check Python version
-echo [1/5] Checking Python version...
+REM Step 1: Check Python
+echo [1/5] Checking Python installation...
 where python >nul 2>&1
 if errorlevel 1 (
     echo ERROR: Python not found
@@ -18,11 +18,13 @@ if errorlevel 1 (
     exit /b 1
 )
 python --version
+echo Python found!
 echo.
 
-REM Create virtual environment
+REM Step 2: Create virtual environment FIRST
 echo [2/5] Creating virtual environment...
 if not exist "venv" (
+    echo Creating new virtual environment...
     python -m venv venv
     if errorlevel 1 (
         echo ERROR: Failed to create virtual environment
@@ -35,57 +37,53 @@ if not exist "venv" (
 )
 echo.
 
-REM Activate virtual environment
+REM Step 3: Activate virtual environment
 echo [3/5] Activating virtual environment...
-if exist "venv\Scripts\activate.bat" (
-    call venv\Scripts\activate.bat
-) else (
-    echo ERROR: Virtual environment activation script not found
+if not exist "venv\Scripts\activate.bat" (
+    echo ERROR: Virtual environment files not found
     pause
     exit /b 1
 )
+call venv\Scripts\activate.bat
+echo Virtual environment activated
 echo.
 
-REM Upgrade pip
-echo [4/5] Upgrading pip...
-python -m pip install --upgrade pip --quiet
+REM Step 4: Upgrade pip in virtual environment
+echo [4/5] Upgrading pip in virtual environment...
+python -m pip install --upgrade pip
 echo.
 
-REM Install core dependencies
-echo [5/5] Installing dependencies...
-echo Installing FastAPI core dependencies...
-pip install fastapi uvicorn pydantic pydantic-settings --quiet
-if errorlevel 1 (
-    echo WARNING: Some dependencies failed to install
-)
+REM Step 5: Install all dependencies in virtual environment
+echo [5/5] Installing dependencies in virtual environment...
+echo.
 
-echo Installing database dependencies...
-pip install sqlalchemy alembic --quiet
-if errorlevel 1 (
-    echo WARNING: Database dependencies installation failed
-)
+echo Installing FastAPI core...
+pip install fastapi uvicorn pydantic pydantic-settings
+if errorlevel 1 echo WARNING: FastAPI installation had issues
+
+echo Installing database tools...
+pip install sqlalchemy alembic
+if errorlevel 1 echo WARNING: Database tools installation had issues
 
 echo Installing PostgreSQL driver...
-pip install psycopg2-binary --quiet 2>nul
+pip install psycopg2-binary 2>nul
 if errorlevel 1 (
     echo psycopg2-binary failed, trying psycopg v3...
-    pip install "psycopg[binary,pool]" --quiet
+    pip install "psycopg[binary,pool]"
 )
 
 echo Installing HTTP client...
-pip install httpx --quiet
+pip install httpx
 
-echo Installing utility libraries...
-pip install python-dotenv python-dateutil --quiet
+echo Installing utilities...
+pip install python-dotenv python-dateutil
 
-echo Installing EDINET tools...
-pip install edinet-tools --quiet 2>nul
-if errorlevel 1 (
-    echo edinet-tools installation failed, will skip
-)
+echo Installing EDINET tools (optional)...
+pip install edinet-tools 2>nul
+if errorlevel 1 echo edinet-tools not installed, will skip
 
 echo Installing scheduler...
-pip install apscheduler --quiet
+pip install apscheduler
 
 echo.
 echo ========================================
@@ -96,7 +94,7 @@ echo Next steps:
 echo 1. Ensure PostgreSQL is installed and running
 echo 2. Copy config: copy .env.windows .env
 echo 3. Edit .env file with your database credentials
-echo 4. Initialize database: python scripts\init_db.py
+echo 4. Initialize database: init-db-windows.bat
 echo 5. Start service: start-windows.bat
 echo.
 pause

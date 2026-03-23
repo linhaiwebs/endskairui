@@ -66,7 +66,7 @@ USE_REDIS=false
 python scripts\init_db.py
 ```
 
-#### 步骤4：启动服务
+#### 步骤4：启动后端服务
 
 ```powershell
 # 方式1：使用批处理脚本
@@ -78,6 +78,32 @@ uvicorn app.main:app --reload --port 8000
 ```
 
 访问：http://localhost:8000/docs 查看API文档
+
+#### 步骤5：部署前端
+
+```powershell
+# 1. 进入frontend目录
+cd ..\frontend
+
+# 2. 安装前端依赖
+.\install-windows.bat
+
+# 3. 启动前端服务
+.\start-windows.bat
+```
+
+访问：http://localhost:3000 查看前端应用
+
+**注意**：前端和后端需要同时运行，请使用两个PowerShell窗口分别启动。
+
+#### 快速启动（推荐）
+
+```powershell
+# 在项目根目录，一键启动前后端服务
+.\start-all-windows.bat
+```
+
+这会自动打开两个窗口分别运行前后端服务。
 
 ## ⚠️ Windows环境常见问题
 

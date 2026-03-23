@@ -3,47 +3,47 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 echo ========================================
-echo 日本上市公司信息披露平台 - 启动服务
+echo JP Disclosure Platform - Start Backend
 echo ========================================
 echo.
 
-REM 检查虚拟环境
+REM Check virtual environment
 if not exist "venv" (
-    echo 错误：未找到虚拟环境
-    echo 请先运行 install-windows.bat 进行安装
+    echo ERROR: Virtual environment not found
+    echo Please run install-windows.bat first
     pause
     exit /b 1
 )
 
-REM 激活虚拟环境
+REM Activate virtual environment
 if exist "venv\Scripts\activate.bat" (
     call venv\Scripts\activate.bat
 ) else (
-    echo 错误：虚拟环境激活脚本不存在
+    echo ERROR: Virtual environment activation script not found
     pause
     exit /b 1
 )
 
-REM 检查.env文件
+REM Check .env file
 if not exist ".env" (
-    echo 警告：未找到.env配置文件
-    echo 正在使用默认配置...
-    echo 请复制 .env.windows 为 .env 并修改配置
+    echo WARNING: .env configuration file not found
+    echo Using default configuration...
+    echo Please copy .env.windows to .env and configure
     echo.
 )
 
-REM 检查uvicorn是否安装
+REM Check uvicorn
 where uvicorn >nul 2>&1
 if errorlevel 1 (
-    echo 错误：未找到uvicorn命令
-    echo 请确认虚拟环境已正确激活
+    echo ERROR: uvicorn not found
+    echo Please confirm virtual environment is activated
     pause
     exit /b 1
 )
 
-REM 启动服务
-echo 启动FastAPI服务...
-echo API文档：http://localhost:8000/docs
-echo 按 Ctrl+C 停止服务
+REM Start service
+echo Starting FastAPI service...
+echo API Docs: http://localhost:8000/docs
+echo Press Ctrl+C to stop
 echo.
 uvicorn app.main:app --reload --port 8000

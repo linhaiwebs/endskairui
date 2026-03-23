@@ -3,102 +3,100 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 echo ========================================
-echo 日本上市公司信息披露平台 - Windows安装
+echo JP Disclosure Platform - Windows Install
 echo ========================================
 echo.
 
-REM 检查Python版本
-echo [1/5] 检查Python版本...
+REM Check Python version
+echo [1/5] Checking Python version...
 where python >nul 2>&1
 if errorlevel 1 (
-    echo 错误：未找到Python，请先安装Python 3.10-3.12
-    echo 下载地址：https://www.python.org/downloads/
+    echo ERROR: Python not found
+    echo Please install Python 3.10-3.12
+    echo Download: https://www.python.org/downloads/
     pause
     exit /b 1
 )
 python --version
 echo.
 
-REM 创建虚拟环境
-echo [2/5] 创建虚拟环境...
+REM Create virtual environment
+echo [2/5] Creating virtual environment...
 if not exist "venv" (
     python -m venv venv
     if errorlevel 1 (
-        echo 错误：虚拟环境创建失败
+        echo ERROR: Failed to create virtual environment
         pause
         exit /b 1
     )
-    echo 虚拟环境创建成功
+    echo Virtual environment created successfully
 ) else (
-    echo 虚拟环境已存在
+    echo Virtual environment already exists
 )
 echo.
 
-REM 激活虚拟环境
-echo [3/5] 激活虚拟环境...
+REM Activate virtual environment
+echo [3/5] Activating virtual environment...
 if exist "venv\Scripts\activate.bat" (
     call venv\Scripts\activate.bat
 ) else (
-    echo 错误：虚拟环境激活脚本不存在
+    echo ERROR: Virtual environment activation script not found
     pause
     exit /b 1
 )
 echo.
 
-REM 升级pip
-echo [4/5] 升级pip...
+REM Upgrade pip
+echo [4/5] Upgrading pip...
 python -m pip install --upgrade pip --quiet
 echo.
 
-REM 安装核心依赖
-echo [5/5] 安装依赖...
-echo 安装FastAPI核心依赖...
+REM Install core dependencies
+echo [5/5] Installing dependencies...
+echo Installing FastAPI core dependencies...
 pip install fastapi uvicorn pydantic pydantic-settings --quiet
 if errorlevel 1 (
-    echo 警告：部分依赖安装失败，继续尝试...
+    echo WARNING: Some dependencies failed to install
 )
 
-echo 安装数据库依赖...
+echo Installing database dependencies...
 pip install sqlalchemy alembic --quiet
 if errorlevel 1 (
-    echo 警告：数据库依赖安装失败
+    echo WARNING: Database dependencies installation failed
 )
 
-echo 安装PostgreSQL驱动...
+echo Installing PostgreSQL driver...
 pip install psycopg2-binary --quiet 2>nul
 if errorlevel 1 (
-    echo psycopg2-binary安装失败，尝试安装psycopg v3...
+    echo psycopg2-binary failed, trying psycopg v3...
     pip install "psycopg[binary,pool]" --quiet
 )
 
-echo 安装HTTP客户端...
+echo Installing HTTP client...
 pip install httpx --quiet
 
-echo 安装工具库...
+echo Installing utility libraries...
 pip install python-dotenv python-dateutil --quiet
 
-echo 安装EDINET工具...
+echo Installing EDINET tools...
 pip install edinet-tools --quiet 2>nul
 if errorlevel 1 (
-    echo edinet-tools安装失败，将使用备用方案
+    echo edinet-tools installation failed, will skip
 )
 
-echo 安装定时任务调度器...
+echo Installing scheduler...
 pip install apscheduler --quiet
 
 echo.
 echo ========================================
-echo 安装完成！
+echo Installation Complete!
 echo ========================================
 echo.
-echo 接下来的步骤：
-echo 1. 确保PostgreSQL数据库已安装并运行
-echo 2. 复制配置文件：copy .env.windows .env
-echo 3. 编辑.env文件，修改数据库连接
-echo    DATABASE_URL=postgresql://postgres:password@localhost:5432/jp_disclosure
-echo 4. 初始化数据库：python scripts\init_db.py
-echo 5. 启动服务：run start-windows.bat 或 uvicorn app.main:app --reload
-echo.
-echo 详细说明请查看：README.md
+echo Next steps:
+echo 1. Ensure PostgreSQL is installed and running
+echo 2. Copy config: copy .env.windows .env
+echo 3. Edit .env file with your database credentials
+echo 4. Initialize database: python scripts\init_db.py
+echo 5. Start service: start-windows.bat
 echo.
 pause

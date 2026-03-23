@@ -1,8 +1,6 @@
 /**
  * 披露信息卡片组件
  */
-'use client'
-
 import Link from 'next/link'
 import { format } from 'date-fns'
 import type { Disclosure } from '@/lib/types'
@@ -100,7 +98,6 @@ export default function DisclosureCard({ disclosure, showCompany = true }: Discl
               target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary text-sm whitespace-nowrap"
-              onClick={(e) => e.stopPropagation()}
             >
               📄 PDF
             </a>
@@ -111,7 +108,6 @@ export default function DisclosureCard({ disclosure, showCompany = true }: Discl
               target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary text-sm whitespace-nowrap"
-              onClick={(e) => e.stopPropagation()}
             >
               🌐 HTML
             </a>

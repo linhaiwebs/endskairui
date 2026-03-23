@@ -3,43 +3,48 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 echo ========================================
-echo 日本上市公司信息披露平台 - 完整启动
+echo JP Disclosure Platform - Start All Services
 echo ========================================
 echo.
 
-REM 检查backend目录
+REM Check backend installation
 if not exist "backend\venv" (
-    echo 错误：后端未安装
-    echo 请先运行 backend\install-windows.bat
+    echo ERROR: Backend not installed
+    echo Please run backend\install-windows.bat first
     pause
     exit /b 1
 )
+echo Backend installation found
 
-REM 检查frontend目录
+REM Check frontend installation
 if not exist "frontend\node_modules" (
-    echo 错误：前端未安装
-    echo 请先运行 frontend\install-windows.bat
+    echo ERROR: Frontend not installed
+    echo Please run frontend\install-windows.bat first
     pause
     exit /b 1
 )
+echo Frontend installation found
+echo.
 
-echo 启动后端服务...
-start "后端API服务 - http://localhost:8000" cmd /k "cd backend && call venv\Scripts\activate.bat && uvicorn app.main:app --reload --port 8000"
+echo Starting backend service...
+start "Backend API - http://localhost:8000" cmd /k "cd backend && call venv\Scripts\activate.bat && uvicorn app.main:app --reload --port 8000"
 
+echo Waiting 3 seconds for backend to start...
 timeout /t 3 /nobreak >nul
 
-echo 启动前端服务...
-start "前端服务 - http://localhost:3000" cmd /k "cd frontend && npm run dev"
+echo Starting frontend service...
+start "Frontend - http://localhost:3000" cmd /k "cd frontend && npm run dev"
 
 echo.
 echo ========================================
-echo 服务启动完成！
+echo Services Started Successfully!
 echo ========================================
 echo.
-echo 后端API: http://localhost:8000/docs
-echo 前端应用: http://localhost:3000
+echo Backend API: http://localhost:8000/docs
+echo Frontend App: http://localhost:3000
 echo.
-echo 两个新窗口已打开，请保持它们运行
-echo 关闭窗口即可停止服务
+echo Two new windows have been opened.
+echo Keep them running to use the application.
+echo Close the windows to stop the services.
 echo.
 pause

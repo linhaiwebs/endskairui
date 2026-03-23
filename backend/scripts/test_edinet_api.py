@@ -13,7 +13,8 @@ import sys
 class EDINETAPITester:
     """EDINET API 测试器"""
     
-    BASE_URL = "https://disclosure.edinet-fsa.go.jp/api/v1"
+    # 官方API v2基础URL
+    BASE_URL = "https://api.edinet-fsa.go.jp/api/v2"
     
     def __init__(self, api_key: str):
         self.api_key = api_key
@@ -32,7 +33,7 @@ class EDINETAPITester:
                 url = f"{self.BASE_URL}/documents.json"
                 params = {
                     "date": test_date.strftime("%Y-%m-%d"),
-                    "type": 2,
+                    "type": 1,  # 1: 只获取元数据（测试连接更快）
                     "Subscription-Key": self.api_key
                 }
                 
@@ -215,10 +216,12 @@ class EDINETAPITester:
                 
                 # 测试文档下载URL
                 doc_url = f"{self.BASE_URL}/documents/{doc_id}"
-                print(f"\n🔗 文档下载URL:")
-                print(f"   PDF: {doc_url}?type=1")
-                print(f"   HTML: {doc_url}?type=2")
-                print(f"   XBRL: {doc_url}?type=4")
+                print(f"\n🔗 文档下载URL（官方API v2）:")
+                print(f"   提出本文書及び監査報告書: {doc_url}?type=1")
+                print(f"   PDF: {doc_url}?type=2")
+                print(f"   代替書面・添付文書: {doc_url}?type=3")
+                print(f"   英文ファイル: {doc_url}?type=4")
+                print(f"   CSV: {doc_url}?type=5")
                 
                 print(f"✅ 文档详情获取成功")
                 self.test_results.append(("文档详情", True, f"文档ID: {doc_id}"))

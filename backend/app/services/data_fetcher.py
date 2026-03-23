@@ -38,7 +38,8 @@ class EDINETService:
         "160": "その他",
     }
     
-    BASE_URL = "https://disclosure.edinet-fsa.go.jp/api/v1"
+    # EDINET API v2 基础URL（官方文档指定）
+    BASE_URL = "https://api.edinet-fsa.go.jp/api/v2"
     
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or settings.EDINET_API_KEY or "Demo"
@@ -61,7 +62,7 @@ class EDINETService:
         url = f"{self.BASE_URL}/documents.json"
         params = {
             "date": target_date.strftime("%Y-%m-%d"),
-            "type": 2,  # 2: 返回所有文档
+            "type": 2,  # 2: 返回提出書類一覧及びメタデータ
             "Subscription-Key": self.api_key
         }
         
@@ -79,13 +80,23 @@ class EDINETService:
                 "errors": 0
             }
             
+            # 官方API返回的是results数组
             documents = data.get("results", [])
             results["total"] = len(documents)
             
             for doc in documents:
                 try:
-                    # 只处理上市公司披露
+                    # 只处理上市公司披露（有证券代码的）
                     if not doc.get("secCode"):
+                        continue
+                    
+                    # 跳过已撤回或不公开的文档
+                    if doc.get("withdrawalStatus") == "2":
+                        continue
+                    if doc.get("disclosureStatus") == "2":
+                        continue
+                    # 跳过阅览期间已满的文档
+                    if doc.get("legalStatus") == "0":
                         continue
                     
                     # 检查是否已存在
@@ -97,7 +108,7 @@ class EDINETService:
                         results["skipped"] += 1
                         continue
                     
-                    # 创建新披露记录
+                    # 创建新披露记录（按照官方API字段）
                     disclosure = Disclosure(
                         doc_id=doc["docID"],
                         stock_code=doc.get("secCode", ""),
@@ -106,15 +117,21 @@ class EDINETService:
                         doc_type=self._get_doc_type(doc.get("docTypeCode")),
                         doc_type_code=doc.get("docTypeCode"),
                         submit_date=datetime.strptime(
-                            doc.get("submitDateTime", "").split("+")[0], 
-                            "%Y-%m-%d %H:%M:%S"
+                            doc.get("submitDateTime", ""), 
+                            "%Y-%m-%d %H:%M"
                         ) if doc.get("submitDateTime") else datetime.now(),
                         fiscal_year=doc.get("fiscalYear"),
                         period=doc.get("period"),
                         source="EDINET",
-                        pdf_url=f"https://disclosure.edinet-fsa.go.jp/api/v1/documents/{doc['docID']}?type=1" if doc.get("pdfFlag") == "1" else None,
-                        html_url=f"https://disclosure.edinet-fsa.go.jp/api/v1/documents/{doc['docID']}?type=2" if doc.get("htmlFlag") == "1" else None,
-                        xbrl_url=f"https://disclosure.edinet-fsa.go.jp/api/v1/documents/{doc['docID']}?type=4" if doc.get("xbrlFlag") == "1" else None,
+                        # 官方API文档书類取得API的type参数：
+                        # type=1: 提出本文書及び監査報告書（ZIP，包含XBRL）
+                        # type=2: PDF
+                        # type=3: 代替書面・添付文書
+                        # type=4: 英文ファイル
+                        # type=5: CSV
+                        pdf_url=f"https://api.edinet-fsa.go.jp/api/v2/documents/{doc['docID']}?type=2" if doc.get("pdfFlag") == "1" else None,
+                        html_url=None,  # EDINET不直接提供HTML，需要从ZIP中提取
+                        xbrl_url=f"https://api.edinet-fsa.go.jp/api/v2/documents/{doc['docID']}?type=1" if doc.get("xbrlFlag") == "1" else None,
                     )
                     
                     session.add(disclosure)

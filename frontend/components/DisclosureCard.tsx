@@ -1,6 +1,8 @@
 /**
  * 披露信息卡片组件
  */
+'use client'
+
 import Link from 'next/link'
 import { format } from 'date-fns'
 import type { Disclosure } from '@/lib/types'

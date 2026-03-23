@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 REM Windows环境一键安装脚本
 REM 自动检测并安装适合Windows的依赖
 

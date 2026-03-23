@@ -8,7 +8,7 @@ echo ========================================
 echo.
 
 REM Step 1: Check Node.js
-echo [1/3] Checking Node.js installation...
+echo [1/4] Checking Node.js installation...
 where node >nul 2>&1
 if errorlevel 1 (
     echo ERROR: Node.js not found
@@ -18,15 +18,45 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
-echo Node.js found:
-node --version
+
+REM Get Node.js version
+for /f "tokens=*" %%i in ('node --version') do set NODE_VERSION=%%i
+echo Node.js version: %NODE_VERSION%
+
+REM Check Node.js version is 18 or higher
+for /f "tokens=1 delims=v" %%i in ("%NODE_VERSION%") do (
+    for /f "tokens=1 delims=." %%j in ("%%i") do set NODE_MAJOR=%%j
+)
+
+if %NODE_MAJOR% LSS 18 (
+    echo ERROR: Node.js version must be 18 or higher
+    echo Current version: %NODE_VERSION%
+    echo Please upgrade Node.js from https://nodejs.org/
+    pause
+    exit /b 1
+)
+
+echo Node.js version check passed!
 echo.
 echo NPM version:
 npm --version
 echo.
 
-REM Step 2: Install dependencies
-echo [2/3] Installing frontend dependencies...
+REM Step 2: Clean previous installation if exists
+echo [2/4] Cleaning previous installation...
+if exist "node_modules" (
+    echo Removing old node_modules...
+    rmdir /s /q node_modules
+)
+if exist "package-lock.json" (
+    echo Removing old package-lock.json...
+    del /f /q package-lock.json
+)
+echo Cleanup complete!
+echo.
+
+REM Step 3: Install dependencies
+echo [3/4] Installing frontend dependencies...
 echo This may take a few minutes...
 echo.
 call npm install
@@ -36,7 +66,8 @@ if errorlevel 1 (
     echo Please check:
     echo 1. Internet connection is available
     echo 2. npm registry is accessible
-    echo 3. Try deleting node_modules and package-lock.json, then retry
+    echo 3. Try running: npm cache clean --force
+    echo 4. Then retry this script
     pause
     exit /b 1
 )
@@ -44,8 +75,8 @@ echo.
 echo Dependencies installed successfully!
 echo.
 
-REM Step 3: Configure environment
-echo [3/3] Configuring environment...
+REM Step 4: Configure environment
+echo [4/4] Configuring environment...
 if not exist ".env.local" (
     if exist ".env.example" (
         copy .env.example .env.local >nul

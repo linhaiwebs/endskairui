@@ -9,7 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   
   // 获取最新的披露和公司数据
   const [disclosures, companies] = await Promise.all([
-    disclosureAPI.getList({ page_size: 100 }).catch(() => ({ items: [] })),
+    disclosureAPI.getList({ page_size: 100 }).catch(() => ({ items: [], total: 0, page: 1, page_size: 100, total_pages: 0 })),
     companyAPI.getList({ limit: 100 }).catch(() => []),
   ])
   

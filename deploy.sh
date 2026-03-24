@@ -72,8 +72,8 @@ setup_ssl() {
             sudo yum install -y certbot
         fi
         
-        # 申请证书
-        sudo certbot certonly --standalone -d $DOMAIN -d www.$DOMAIN -d $BACKEND_DOMAIN
+        # 申请证书（只需要主域名和www）
+        sudo certbot certonly --standalone -d $DOMAIN -d www.$DOMAIN
         
         # 复制证书
         sudo cp /etc/letsencrypt/live/$DOMAIN/fullchain.pem nginx/ssl/
@@ -155,9 +155,8 @@ show_result() {
     echo -e "${GREEN}部署完成！${NC}"
     echo -e "${GREEN}========================================${NC}"
     echo ""
-    echo -e "前端访问地址: ${GREEN}https://${DOMAIN}${NC}"
-    echo -e "后端API地址: ${GREEN}https://${BACKEND_DOMAIN}${NC}"
-    echo -e "API文档: ${GREEN}https://${BACKEND_DOMAIN}/docs${NC}"
+    echo -e "访问地址: ${GREEN}https://${DOMAIN}${NC}"
+    echo -e "API文档: ${GREEN}https://${DOMAIN}/docs${NC}"
     echo ""
     echo -e "查看日志: docker-compose -f docker-compose.prod.yml logs -f"
     echo -e "停止服务: docker-compose -f docker-compose.prod.yml down"
@@ -178,3 +177,4 @@ main() {
 }
 
 main
+

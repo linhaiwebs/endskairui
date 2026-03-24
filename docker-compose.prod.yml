@@ -44,7 +44,6 @@ services:
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
       - EDINET_API_KEY=${EDINET_API_KEY}
       - SECRET_KEY=${SECRET_KEY}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
       - CORS_ORIGINS=https://${DOMAIN},https://www.${DOMAIN}
     depends_on:
       db:
@@ -66,12 +65,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
       args:
-        - NEXT_PUBLIC_API_URL=https://${BACKEND_DOMAIN}
+        - NEXT_PUBLIC_API_URL=https://${DOMAIN}
         - NEXT_PUBLIC_BASE_URL=https://${DOMAIN}
     container_name: jp_disclosure_frontend
     restart: always
     environment:
-      - NEXT_PUBLIC_API_URL=https://${BACKEND_DOMAIN}
+      - NEXT_PUBLIC_API_URL=https://${DOMAIN}
       - NEXT_PUBLIC_BASE_URL=https://${DOMAIN}
     depends_on:
       - backend
@@ -128,3 +127,4 @@ volumes:
 networks:
   app-network:
     driver: bridge
+

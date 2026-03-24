@@ -9,8 +9,7 @@
 - Docker & Docker Compose 已安装
 
 ### 2. 域名配置
-- 主域名: `your-domain.com` (前端)
-- API域名: `api.your-domain.com` (后端)
+- 域名: `your-domain.com`（前后端共用）
 - 已解析到服务器IP
 
 ### 3. EDINET API密钥
@@ -37,7 +36,6 @@ nano .env.production
 **必须配置的变量:**
 ```env
 DOMAIN=your-domain.com
-BACKEND_DOMAIN=api.your-domain.com
 EDINET_API_KEY=your-api-key-here
 POSTGRES_PASSWORD=your-secure-password
 SECRET_KEY=your-secret-key-here
@@ -62,8 +60,7 @@ SECRET_KEY=your-secret-key-here
 ```bash
 sudo certbot certonly --standalone \
   -d your-domain.com \
-  -d www.your-domain.com \
-  -d api.your-domain.com
+  -d www.your-domain.com
 
 sudo cp /etc/letsencrypt/live/your-domain.com/*.pem nginx/ssl/
 ```
@@ -185,7 +182,7 @@ docker-compose -f docker-compose.prod.yml exec nginx nginx -t
 ls -la nginx/ssl/
 
 # 重新申请证书
-sudo certbot certonly --standalone -d your-domain.com -d www.your-domain.com -d api.your-domain.com
+sudo certbot certonly --standalone -d your-domain.com -d www.your-domain.com
 ```
 
 ## 📊 性能优化
@@ -212,13 +209,13 @@ CREATE INDEX idx_disclosures_stock_code ON disclosures(stock_code);
 ```
 A记录: your-domain.com -> 服务器IP
 A记录: www.your-domain.com -> 服务器IP
-A记录: api.your-domain.com -> 服务器IP
 ```
 
 ### Nginx配置
 已配置在 `nginx/nginx.conf`:
 - 前端: `https://your-domain.com`
-- 后端API: `https://api.your-domain.com`
+- 后端API: `https://your-domain.com/api/`
+- API文档: `https://your-domain.com/docs`
 - 自动HTTP->HTTPS重定向
 - SSL/TLS优化配置
 
@@ -227,3 +224,4 @@ A记录: api.your-domain.com -> 服务器IP
 遇到问题？请查看：
 1. 项目README
 2. GitHub Issues: https://github.com/your-username/endskairui/issues
+

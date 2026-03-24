@@ -6,7 +6,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}日本上場企業開示情報プラットフォーム${NC}"
@@ -39,10 +39,7 @@ install_docker() {
     
     echo -e "${YELLOW}开始安装Docker...${NC}"
     
-    # 更新包索引
     apt-get update
-    
-    # 安装依赖
     apt-get install -y \
         apt-transport-https \
         ca-certificates \
@@ -51,23 +48,16 @@ install_docker() {
         lsb-release \
         git
     
-    # 添加Docker官方GPG密钥
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     
-    # 设置Docker仓库
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-      $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
     
-    # 安装Docker
     apt-get update
     apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     
-    # 启动Docker
     systemctl start docker
     systemctl enable docker
     
-    # 添加当前用户到docker组（可选）
     if [ "$SUDO_USER" ]; then
         usermod -aG docker $SUDO_USER
         echo -e "${GREEN}✓ 已将用户 $SUDO_USER 添加到docker组${NC}"
@@ -105,7 +95,6 @@ configure_env() {
     
     cd /www/wwwroot/jstockp.jp
     
-    # 创建.env.production文件
     cat > .env.production << 'EOF'
 # 域名配置
 DOMAIN=jstockp.jp
@@ -149,7 +138,7 @@ build_images() {
     
     cd /www/wwwroot/jstockp.jp
     
-    docker compose -f docker-compose.prod.yml build
+    docker compose --env-file .env.production -f docker-compose.prod.yml build
     
     echo -e "${GREEN}✓ Docker镜像构建完成${NC}"
 }
@@ -160,11 +149,9 @@ start_services() {
     
     cd /www/wwwroot/jstockp.jp
     
-    # 停止旧容器
-    docker compose -f docker-compose.prod.yml down
+    docker compose --env-file .env.production -f docker-compose.prod.yml down -v
     
-    # 启动新容器
-    docker compose -f docker-compose.prod.yml up -d
+    docker compose --env-file .env.production -f docker-compose.prod.yml up -d
     
     echo -e "${GREEN}✓ 服务启动完成${NC}"
 }
@@ -175,13 +162,11 @@ wait_for_services() {
     
     sleep 15
     
-    # 检查容器状态
     echo -e "${YELLOW}容器状态：${NC}"
     docker compose -f /www/wwwroot/jstockp.jp/docker-compose.prod.yml ps
     
     echo ""
     
-    # 检查后端健康
     for i in {1..30}; do
         if curl -f http://localhost:8000/api/v1/health &> /dev/null; then
             echo -e "${GREEN}✓ 后端服务正常${NC}"
@@ -190,7 +175,6 @@ wait_for_services() {
         sleep 2
     done
     
-    # 检查前端健康
     for i in {1..30}; do
         if curl -f http://localhost:3000 &> /dev/null; then
             echo -e "${GREEN}✓ 前端服务正常${NC}"
@@ -206,13 +190,13 @@ init_data() {
     
     cd /www/wwwroot/jstockp.jp
     
-    docker compose -f docker-compose.prod.yml exec -T backend python scripts/init_db.py
+    docker compose --env-file .env.production -f docker-compose.prod.yml exec -T backend python scripts/init_db.py
     
     echo -e "${GREEN}✓ 数据库初始化完成${NC}"
     
     echo -e "${YELLOW}获取最新数据（最近7天）...${NC}"
     
-    docker compose -f docker-compose.prod.yml exec -T backend python scripts/fetch_edinet.py 7
+    docker compose --env-file .env.production -f docker-compose.prod.yml exec -T backend python scripts/fetch_edinet.py 7
     
     echo -e "${GREEN}✓ 数据获取完成${NC}"
 }
@@ -258,4 +242,3 @@ main() {
 }
 
 main
-

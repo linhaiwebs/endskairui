@@ -55,32 +55,24 @@ configure_env() {
 
 # 创建SSL证书目录
 setup_ssl() {
-    echo -e "${YELLOW}设置SSL证书...${NC}"
+    echo -e "${YELLOW}设置SSL证书目录...${NC}"
     
     mkdir -p nginx/ssl
     
+    # Cloudflare代理模式：使用Cloudflare Origin Certificate或自签名证书
     if [ ! -f nginx/ssl/fullchain.pem ] || [ ! -f nginx/ssl/privkey.pem ]; then
-        echo -e "${YELLOW}未找到SSL证书，使用Let's Encrypt申请...${NC}"
-        echo "请确保域名已正确解析到本服务器IP"
-        echo ""
+        echo -e "${YELLOW}未找到SSL证书，创建自签名证书（Cloudflare代理模式）...${NC}"
+        echo -e "${YELLOW}建议：在Cloudflare控制台生成Origin Certificate${NC}"
         
-        # 安装certbot
-        if command -v apt-get &> /dev/null; then
-            sudo apt-get update
-            sudo apt-get install -y certbot
-        elif command -v yum &> /dev/null; then
-            sudo yum install -y certbot
-        fi
+        # 生成自签名证书（用于Cloudflare代理）
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+            -keyout nginx/ssl/privkey.pem \
+            -out nginx/ssl/fullchain.pem \
+            -subj "/C=JP/ST=Tokyo/L=Tokyo/O=Disclosure/CN=$DOMAIN" 2>/dev/null
         
-        # 申请证书（只需要主域名和www）
-        sudo certbot certonly --standalone -d $DOMAIN -d www.$DOMAIN
+        chmod 644 nginx/ssl/*.pem
         
-        # 复制证书
-        sudo cp /etc/letsencrypt/live/$DOMAIN/fullchain.pem nginx/ssl/
-        sudo cp /etc/letsencrypt/live/$DOMAIN/privkey.pem nginx/ssl/
-        sudo chmod 644 nginx/ssl/*.pem
-        
-        echo -e "${GREEN}✓ SSL证书配置完成${NC}"
+        echo -e "${GREEN}✓ 自签名证书已创建（仅用于Cloudflare代理模式）${NC}"
     else
         echo -e "${GREEN}✓ SSL证书已存在${NC}"
     fi
@@ -157,6 +149,11 @@ show_result() {
     echo ""
     echo -e "访问地址: ${GREEN}https://${DOMAIN}${NC}"
     echo -e "API文档: ${GREEN}https://${DOMAIN}/docs${NC}"
+    echo ""
+    echo -e "${YELLOW}Cloudflare配置提示：${NC}"
+    echo -e "1. 确保Cloudflare已开启代理模式（橙色云朵）"
+    echo -e "2. SSL/TLS模式设置为 'Full' 或 'Full (Strict)'"
+    echo -e "3. 建议使用Cloudflare Origin Certificate"
     echo ""
     echo -e "查看日志: docker-compose -f docker-compose.prod.yml logs -f"
     echo -e "停止服务: docker-compose -f docker-compose.prod.yml down"

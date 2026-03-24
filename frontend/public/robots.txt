@@ -1,24 +1,39 @@
-# robots.txt for JP Disclosure Platform
-# 日本上市公司信息披露平台
+# robots.txt for 開示情報検索
+# 日本上場企業開示情報プラットフォーム
 
-# 允许所有爬虫访问
+# すべてのクローラーにアクセスを許可
 User-agent: *
 Allow: /
 
-# 禁止访问的路径
+# 内部APIとシステムパスへのアクセスを禁止
 Disallow: /api/
 Disallow: /_next/
 Disallow: /static/
 
-# Sitemap位置
-Sitemap: https://jp-disclosure.com/sitemap.xml
+# 広告プラットフォームのクローラーを許可（Google AdSense等）
+User-agent: Mediapartners-Google
+Allow: /
 
-# 爬虫延迟（秒）- 避免对服务器造成过大压力
-Crawl-delay: 1
+User-agent: AdsBot-Google
+Allow: /
 
-# 特殊规则：Google和Bing可以更快地爬取
+User-agent: Googlebot-News
+Allow: /
+
+# 主要検索エンジンのクロール頻度設定
 User-agent: Googlebot
 Crawl-delay: 0
 
 User-agent: Bingbot
 Crawl-delay: 0
+
+User-agent: Slurp
+Crawl-delay: 1
+
+# その他のクローラーは1秒待機
+User-agent: *
+Crawl-delay: 1
+
+# サイトマップの場所
+Sitemap: https://jp-disclosure.com/sitemap.xml
+

@@ -1,5 +1,5 @@
 /**
- * 网站页脚组件
+ * フッターコンポーネント
  */
 import Link from 'next/link'
 
@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="bg-gray-800 text-gray-300 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* 免责声明 */}
+        {/* 免責事項 */}
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
           <div className="flex">
             <div className="flex-shrink-0">
@@ -16,58 +16,73 @@ export default function Footer() {
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-sm text-yellow-700 font-medium">
-                ⚠️ 免责声明
+              <p className="text-sm text-yellow-800 font-medium mb-2">
+                ⚠️ 免責事項
               </p>
-              <p className="text-sm text-yellow-700 mt-1">
-                本网站仅提供公开披露信息整理，不构成任何投资建议。投资有风险，决策需谨慎。
-              </p>
+              <div className="text-sm text-yellow-700 space-y-1">
+                <p>
+                  1. 本サイトは、金融庁EDINETおよび東京証券取引所TDnetで公開された情報を整理し、検索機能を提供する中立的な情報プラットフォームです。
+                </p>
+                <p>
+                  2. 本サイトの情報は、投資勧誘または投資推奨を目的とするものではありません。投資に関する意思決定は、ご自身の判断と責任で行ってください。
+                </p>
+                <p>
+                  3. 本サイトは公式の金融庁、東京証券取引所、または上場企業のウェブサイトではありません。
+                </p>
+                <p>
+                  4. 本サイトの情報は、元の情報と完全に一致することを保証しません。最新の正確な情報は、必ず公式情報源でご確認ください。
+                </p>
+                <p>
+                  5. 本サイトの情報を基にした投資判断により生じた損害について、一切の責任を負いかねます。
+                </p>
+              </div>
             </div>
           </div>
         </div>
         
-        {/* 数据来源 */}
+        {/* データソース */}
         <div className="mb-6">
           <p className="text-sm text-gray-400">
-            <strong className="text-gray-300">数据来源：</strong>
+            <strong className="text-gray-300">データソース：</strong>
             <Link 
               href="https://disclosure.edinet-fsa.go.jp/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="link ml-1"
             >
-              EDINET（日本金融厅）
+              EDINET（金融庁）
             </Link>
-            <span className="mx-2">和</span>
+            <span className="mx-2">および</span>
             <Link 
               href="https://www.tse.or.jp/listing/tdnet/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="link"
             >
-              东京证券交易所 TDnet
+              東京証券取引所 TDnet
             </Link>
           </p>
         </div>
         
-        {/* 链接区域 */}
+        {/* リンクエリア */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <h3 className="text-white font-medium mb-3">功能</h3>
+            <h3 className="text-white font-medium mb-3">機能</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/disclosures" className="hover:text-white transition-colors">披露列表</Link></li>
-              <li><Link href="/stocks" className="hover:text-white transition-colors">公司列表</Link></li>
+              <li><Link href="/disclosures" className="hover:text-white transition-colors">開示一覧</Link></li>
+              <li><Link href="/companies" className="hover:text-white transition-colors">企業一覧</Link></li>
+              <li><Link href="/stats" className="hover:text-white transition-colors">統計情報</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-medium mb-3">帮助</h3>
+            <h3 className="text-white font-medium mb-3">ヘルプ</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/about" className="hover:text-white transition-colors">关于本站</Link></li>
-              <li><Link href="/faq" className="hover:text-white transition-colors">常见问题</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">このサイトについて</Link></li>
+              <li><Link href="/faq" className="hover:text-white transition-colors">よくある質問</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-medium mb-3">外部链接</h3>
+            <h3 className="text-white font-medium mb-3">外部リンク</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link 
@@ -76,7 +91,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  EDINET官网
+                  EDINET公式サイト
                 </Link>
               </li>
               <li>
@@ -86,27 +101,27 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  TDnet官网
+                  TDnet公式サイト
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-medium mb-3">法律</h3>
+            <h3 className="text-white font-medium mb-3">法的情報</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/privacy" className="hover:text-white transition-colors">隐私政策</Link></li>
-              <li><Link href="/terms" className="hover:text-white transition-colors">使用条款</Link></li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">プライバシーポリシー</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition-colors">利用規約</Link></li>
             </ul>
           </div>
         </div>
         
-        {/* 版权信息 */}
+        {/* 著作権情報 */}
         <div className="border-t border-gray-700 pt-6 text-center text-sm text-gray-400">
           <p>
-            © {new Date().getFullYear()} 日本上市公司信息披露平台 - 仅供信息查询，不提供投资建议
+            © {new Date().getFullYear()} 開示情報検索 - 情報提供のみを目的とし、投資推奨ではありません
           </p>
           <p className="mt-2">
-            本站为第三方中立信息平台，与日本金融厅、东京证券交易所以及任何上市公司无关联
+            本サイトは第三者中立的情報プラットフォームであり、金融庁、東京証券取引所、または上場企業との提携関係はありません
           </p>
         </div>
       </div>

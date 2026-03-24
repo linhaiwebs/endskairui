@@ -169,10 +169,12 @@ class EDINETService:
             文档内容字典
         """
         # 注意：实际内容获取需要解析XBRL或PDF
-        # 这里返回基本信息
+        # 这里返回基本信息，使用官方API v2
         return {
             "doc_id": doc_id,
-            "content_url": f"https://disclosure.edinet-fsa.go.jp/api/v1/documents/{doc_id}?type=2"
+            "content_url": f"https://api.edinet-fsa.go.jp/api/v2/documents/{doc_id}?type=2",
+            "pdf_url": f"https://api.edinet-fsa.go.jp/api/v2/documents/{doc_id}?type=2",
+            "xbrl_url": f"https://api.edinet-fsa.go.jp/api/v2/documents/{doc_id}?type=1",
         }
 
 

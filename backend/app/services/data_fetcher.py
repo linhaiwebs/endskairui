@@ -135,14 +135,22 @@ class EDINETService:
                     )
                     
                     session.add(disclosure)
+                    # 每条记录立即提交，避免批量插入时的重复键问题
+                    session.commit()
                     results["new"] += 1
                     
                 except Exception as e:
-                    logger.error(f"Error processing document {doc.get('docID')}: {e}")
-                    results["errors"] += 1
+                    # 回滚当前事务，继续处理下一条
+                    session.rollback()
+                    
+                    # 检查是否是重复键错误
+                    if "UniqueViolation" in str(e) or "duplicate key" in str(e).lower():
+                        results["skipped"] += 1
+                        logger.debug(f"Document {doc.get('docID')} already exists, skipped")
+                    else:
+                        logger.error(f"Error processing document {doc.get('docID')}: {e}")
+                        results["errors"] += 1
                     continue
-            
-            session.commit()
             return results
             
         except Exception as e:

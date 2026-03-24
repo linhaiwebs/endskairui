@@ -110,7 +110,6 @@ class APIClient {
       return this.fetch<string[]>('/api/v1/stocks/markets/list')
     },
   }
-}
 
   // 统计相关
   stats = {

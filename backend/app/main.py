@@ -112,7 +112,20 @@ async def health_check():
     """健康检查端点"""
     return {
         "status": "healthy",
-        "service": settings.PROJECT_NAME
+        "service": settings.PROJECT_NAME,
+        "version": "1.0.0",
+        "database": "connected"
+    }
+
+
+@app.get("/api/v1/health", tags=["健康检查"])
+async def health_check_v1():
+    """健康检查端点 (API v1)"""
+    return {
+        "status": "healthy",
+        "service": settings.PROJECT_NAME,
+        "version": "1.0.0",
+        "database": "connected"
     }
 
 

@@ -134,7 +134,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               <div className="text-gray-600">
                 找到 {disclosures.total} 条披露信息 和 {companies.length} 家公司
                 {query && (
-                  <span>，关键词: "<span className="font-medium">{query}</span>"</span>
+                  <span>，关键词: &ldquo;<span className="font-medium">{query}</span>&rdquo;</span>
                 )}
               </div>
               
@@ -215,7 +215,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 <div className="text-center py-12">
                   <div className="text-gray-400 text-6xl mb-4">🔍</div>
                   <p className="text-gray-600 text-lg">
-                    未找到与 "<span className="font-medium">{query}</span>" 相关的结果
+                    未找到与 &ldquo;<span className="font-medium">{query}</span>&rdquo; 相关的结果
                   </p>
                   <p className="text-gray-500 mt-2">
                     建议：

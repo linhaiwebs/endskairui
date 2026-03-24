@@ -159,10 +159,10 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
                             {financial.net_income ? formatYen(financial.net_income) : '-'}
                           </td>
                           <td className="text-right py-3">
-                            {financial.eps ? `¥${financial.eps.toFixed(2)}` : '-'}
+                            {financial.eps ? `¥${Number(financial.eps).toFixed(2)}` : '-'}
                           </td>
                           <td className="text-right py-3">
-                            {financial.roe ? `${financial.roe.toFixed(1)}%` : '-'}
+                            {financial.roe ? `${Number(financial.roe).toFixed(1)}%` : '-'}
                           </td>
                         </tr>
                       ))}

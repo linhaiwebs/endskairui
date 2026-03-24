@@ -55,24 +55,35 @@ configure_env() {
 
 # 创建SSL证书目录
 setup_ssl() {
-    echo -e "${YELLOW}设置SSL证书目录...${NC}"
+    echo -e "${YELLOW}检查SSL证书...${NC}"
     
     mkdir -p nginx/ssl
     
-    # Cloudflare代理模式：使用Cloudflare Origin Certificate或自签名证书
+    # Cloudflare代理模式：不需要证书或使用Origin Certificate
     if [ ! -f nginx/ssl/fullchain.pem ] || [ ! -f nginx/ssl/privkey.pem ]; then
-        echo -e "${YELLOW}未找到SSL证书，创建自签名证书（Cloudflare代理模式）...${NC}"
-        echo -e "${YELLOW}建议：在Cloudflare控制台生成Origin Certificate${NC}"
-        
-        # 生成自签名证书（用于Cloudflare代理）
-        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-            -keyout nginx/ssl/privkey.pem \
-            -out nginx/ssl/fullchain.pem \
-            -subj "/C=JP/ST=Tokyo/L=Tokyo/O=Disclosure/CN=$DOMAIN" 2>/dev/null
-        
-        chmod 644 nginx/ssl/*.pem
-        
-        echo -e "${GREEN}✓ 自签名证书已创建（仅用于Cloudflare代理模式）${NC}"
+        echo -e "${YELLOW}未找到SSL证书${NC}"
+        echo -e "${YELLOW}Cloudflare代理模式有两种选择：${NC}"
+        echo ""
+        echo "1. 使用Cloudflare Origin Certificate（推荐）："
+        echo "   - 在Cloudflare控制台：SSL/TLS → Origin Server → Create Certificate"
+        echo "   - 下载证书保存到 nginx/ssl/fullchain.pem 和 nginx/ssl/privkey.pem"
+        echo ""
+        echo "2. 不使用证书（Cloudflare Full模式）："
+        echo "   - Cloudflare SSL/TLS模式设置为 'Full'"
+        echo "   - 创建空证书文件继续部署"
+        echo ""
+        read -p "是否创建空证书文件继续部署？(y/n) " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            # 创建空的占位符文件
+            touch nginx/ssl/fullchain.pem
+            touch nginx/ssl/privkey.pem
+            chmod 644 nginx/ssl/*.pem
+            echo -e "${GREEN}✓ 已创建占位符文件（Cloudflare将处理SSL）${NC}"
+        else
+            echo -e "${RED}请先配置SSL证书后再运行部署脚本${NC}"
+            exit 1
+        fi
     else
         echo -e "${GREEN}✓ SSL证书已存在${NC}"
     fi

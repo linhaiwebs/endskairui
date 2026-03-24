@@ -1,5 +1,5 @@
 /**
- * 搜索页面
+ * 検索ページ
  */
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -9,8 +9,8 @@ import DisclosureCard from '@/components/DisclosureCard'
 import { disclosureAPI, companyAPI } from '@/lib/api'
 
 export const metadata: Metadata = {
-  title: '搜索',
-  description: '搜索日本上市公司披露信息和公司数据',
+  title: '検索 | 開示情報検索',
+  description: '日本上場企業の開示情報と企業データを検索',
 }
 
 interface SearchPageProps {
@@ -26,7 +26,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const type = searchParams.type || 'all'
   const page = parseInt(searchParams.page || '1')
   
-  // 执行搜索
+  // 执行検索
   let disclosures = { items: [] as any[], total: 0, page: 1, page_size: 20, total_pages: 0 }
   let companies: any[] = []
   
@@ -59,10 +59,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       
       <main className="flex-1 bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* 搜索框 */}
+          {/* 検索ボックス */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-6">
-              搜索结果
+              検索結果
             </h1>
             
             <form action="/search" method="GET" className="max-w-2xl">
@@ -71,7 +71,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   type="text"
                   name="q"
                   defaultValue={query}
-                  placeholder="搜索公司名称、股票代码或披露内容..."
+                  placeholder="会社名、証券コード、または開示内容を検索..."
                   className="w-full px-6 py-4 pl-12 text-lg border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
                 <svg
@@ -84,7 +84,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 </svg>
               </div>
               
-              {/* 搜索类型选择 */}
+              {/* 検索タイプ選択 */}
               <div className="mt-4 flex gap-4">
                 <label className="flex items-center">
                   <input
@@ -94,7 +94,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     defaultChecked={type === 'all'}
                     className="mr-2"
                   />
-                  全部
+                  すべて
                 </label>
                 <label className="flex items-center">
                   <input
@@ -104,7 +104,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     defaultChecked={type === 'disclosures'}
                     className="mr-2"
                   />
-                  披露信息
+                  開示情報
                 </label>
                 <label className="flex items-center">
                   <input
@@ -114,7 +114,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     defaultChecked={type === 'companies'}
                     className="mr-2"
                   />
-                  公司
+                  企業
                 </label>
               </div>
               
@@ -122,27 +122,27 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 type="submit"
                 className="mt-4 btn-primary"
               >
-                搜索
+                検索
               </button>
             </form>
           </div>
           
-          {/* 搜索结果 */}
+          {/* 検索结果 */}
           {query && (
             <div className="space-y-8">
               {/* 统计信息 */}
               <div className="text-gray-600">
-                找到 {disclosures.total} 条披露信息 和 {companies.length} 家公司
+                見つかりました {disclosures.total} 件の開示情報 和 {companies.length} 社の企業
                 {query && (
                   <span>，关键词: &ldquo;<span className="font-medium">{query}</span>&rdquo;</span>
                 )}
               </div>
               
-              {/* 公司结果 */}
+              {/* 企業结果 */}
               {(type === 'all' || type === 'companies') && companies.length > 0 && (
                 <section>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    公司 ({companies.length})
+                    企業 ({companies.length})
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {companies.map((company) => (
@@ -155,11 +155,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                           {company.company_name}
                         </h3>
                         <p className="text-gray-600 text-sm">
-                          股票代码: {company.stock_code}
+                          証券コード: {company.stock_code}
                         </p>
                         {company.industry && (
                           <p className="text-gray-500 text-sm mt-1">
-                            行业: {company.industry}
+                            業種: {company.industry}
                           </p>
                         )}
                       </Link>
@@ -172,7 +172,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               {(type === 'all' || type === 'disclosures') && disclosures.items.length > 0 && (
                 <section>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    披露信息 ({disclosures.total})
+                    開示情報 ({disclosures.total})
                   </h2>
                   <div className="space-y-4">
                     {disclosures.items.map((disclosure) => (
@@ -215,27 +215,27 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 <div className="text-center py-12">
                   <div className="text-gray-400 text-6xl mb-4">🔍</div>
                   <p className="text-gray-600 text-lg">
-                    未找到与 &ldquo;<span className="font-medium">{query}</span>&rdquo; 相关的结果
+                    未見つかりました与 &ldquo;<span className="font-medium">{query}</span>&rdquo; 一致する結果
                   </p>
                   <p className="text-gray-500 mt-2">
-                    建议：
+                    ヒント：
                   </p>
                   <ul className="text-gray-500 mt-2 space-y-1">
-                    <li>• 检查输入的关键词是否正确</li>
-                    <li>• 尝试使用不同的关键词</li>
-                    <li>• 使用股票代码进行精确搜索（如：7203, 6758）</li>
+                    <li>• キーワードが正しいか確認してください</li>
+                    <li>• 別のキーワードを試してください</li>
+                    <li>• 使用証券コード进行精确検索（例：7203, 6758）</li>
                   </ul>
                 </div>
               )}
             </div>
           )}
           
-          {/* 无搜索词 */}
+          {/* 検索キーワードなし */}
           {!query && (
             <div className="text-center py-12">
               <div className="text-gray-400 text-6xl mb-4">💡</div>
               <p className="text-gray-600 text-lg">
-                请输入搜索关键词开始搜索
+                请输入検索キーワード开始検索
               </p>
             </div>
           )}

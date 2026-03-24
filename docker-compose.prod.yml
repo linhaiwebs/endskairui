@@ -84,7 +84,7 @@ services:
       - "${HTTP_PORT:-80}:80"
       - "${HTTPS_PORT:-443}:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf.template:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - ./nginx/logs:/var/log/nginx
       - backend_static:/var/www/backend/static:ro
@@ -93,6 +93,19 @@ services:
       - frontend
     networks:
       - app-network
+    entrypoint: >
+      sh -c "
+        if [ ! -f /etc/nginx/ssl/fullchain.pem ] || [ ! -s /etc/nginx/ssl/fullchain.pem ]; then
+          echo 'No SSL certificate found, generating dummy cert for Cloudflare proxy...' &&
+          mkdir -p /etc/nginx/ssl &&
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+            -keyout /etc/nginx/ssl/privkey.pem \
+            -out /etc/nginx/ssl/fullchain.pem \
+            -subj '/C=JP/ST=Tokyo/L=Tokyo/O=Dummy/CN=localhost' 2>/dev/null || true
+        fi &&
+        envsubst '$${DOMAIN}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf &&
+        nginx -g 'daemon off;'
+      "
 
   # 定时任务 - 每天获取EDINET数据
   scheduler:
@@ -113,6 +126,7 @@ services:
       - app-network
     command: >
       sh -c "
+        mkdir -p /etc/crontabs &&
         echo '0 9,17 * * * cd /app && python scripts/fetch_edinet.py 1 >> /var/log/cron.log 2>&1' > /etc/crontabs/root &&
         crond -f -l 2
       "

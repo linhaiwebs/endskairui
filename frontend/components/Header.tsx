@@ -66,7 +66,7 @@ export default function Header() {
               開示一覧
             </Link>
             <Link 
-              href="/companies" 
+              href="/stocks" 
               className="text-gray-600 hover:text-gray-900 transition-colors text-sm"
             >
               企業一覧
@@ -111,7 +111,7 @@ export default function Header() {
                 開示一覧
               </Link>
               <Link 
-                href="/companies" 
+                href="/stocks" 
                 className="text-gray-600 hover:text-gray-900 transition-colors px-2 py-1"
               >
                 企業一覧

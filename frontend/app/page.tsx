@@ -8,6 +8,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import DisclosureCard from '@/components/DisclosureCard'
 import { disclosureAPI, companyAPI, statsAPI } from '@/lib/api'
+import type { Disclosure, Company } from '@/lib/types'
 
 export const metadata: Metadata = {
   title: '開示情報検索 - EDINET・TDnet開示情報プラットフォーム',
@@ -162,7 +163,7 @@ export default async function HomePage() {
             
             {latestDisclosures.items.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {latestDisclosures.items.map((disclosure) => (
+                {latestDisclosures.items.map((disclosure: Disclosure) => (
                   <DisclosureCard 
                     key={disclosure.id} 
                     disclosure={disclosure} 
@@ -195,7 +196,7 @@ export default async function HomePage() {
             
             {companies.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {companies.map((company) => (
+                {companies.map((company: Company) => (
                   <Link
                     key={company.id}
                     href={`/stock/${company.stock_code}`}

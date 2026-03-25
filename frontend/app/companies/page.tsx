@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function CompaniesPage() {
-  const companies = await companyAPI.getList({ limit: 100 }).catch(() => [])
+  const companies = await companyAPI.getList({ limit: 500 }).catch(() => [])
 
   return (
     <>

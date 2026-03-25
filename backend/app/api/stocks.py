@@ -23,7 +23,7 @@ async def get_companies(
     keyword: Optional[str] = Query(None, description="搜索关键词"),
     industry: Optional[str] = Query(None, description="行业筛选"),
     market: Optional[str] = Query(None, description="市场筛选"),
-    limit: int = Query(50, ge=1, le=100, description="返回数量"),
+    limit: int = Query(500, ge=1, le=1000, description="返回数量"),
     db: Session = Depends(get_db)
 ):
     """

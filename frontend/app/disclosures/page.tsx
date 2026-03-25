@@ -138,7 +138,7 @@ export default async function DisclosuresPage({ searchParams }: DisclosurePagePr
           {/* 披露列表 */}
           {data.items.length > 0 ? (
             <>
-              <div className="space-y-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {data.items.map((disclosure) => (
                   <DisclosureCard 
                     key={disclosure.id} 

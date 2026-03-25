@@ -12,11 +12,19 @@ export const metadata: Metadata = {
 }
 
 export default async function StatsPage() {
-  const [overview, daily, hotCompanies] = await Promise.all([
-    statsAPI.getOverview().catch(() => null),
-    statsAPI.getDaily(7).catch(() => null),
-    statsAPI.getHotCompanies(10).catch(() => []),
-  ])
+  let overview = null
+  let daily = null
+  let hotCompanies: any[] = []
+  
+  try {
+    [overview, daily, hotCompanies] = await Promise.all([
+      statsAPI.getOverview(),
+      statsAPI.getDaily(7),
+      statsAPI.getHotCompanies(10),
+    ])
+  } catch (error) {
+    console.error('Error fetching stats data:', error)
+  }
 
   return (
     <>

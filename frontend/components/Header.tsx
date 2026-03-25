@@ -77,12 +77,6 @@ export default function Header() {
             >
               統計情報
             </Link>
-            <Link 
-              href="/about" 
-              className="text-gray-600 hover:text-gray-900 transition-colors text-sm"
-            >
-              このサイトについて
-            </Link>
           </nav>
 
           {/* モバイルメニューボタン */}
@@ -121,12 +115,6 @@ export default function Header() {
                 className="text-gray-600 hover:text-gray-900 transition-colors px-2 py-1"
               >
                 統計情報
-              </Link>
-              <Link 
-                href="/about" 
-                className="text-gray-600 hover:text-gray-900 transition-colors px-2 py-1"
-              >
-                このサイトについて
               </Link>
             </nav>
           </div>

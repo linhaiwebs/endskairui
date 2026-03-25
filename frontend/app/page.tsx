@@ -27,11 +27,19 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   // 並行してデータを取得
-  const [latestDisclosures, companies, stats] = await Promise.all([
-    disclosureAPI.getLatest(10).catch(() => ({ items: [], total: 0, page: 1, page_size: 10, total_pages: 0 })),
-    companyAPI.getList({ limit: 5 }).catch(() => []),
-    statsAPI.getOverview().catch(() => null),
-  ])
+  let latestDisclosures = { items: [], total: 0, page: 1, page_size: 10, total_pages: 0 }
+  let companies: any[] = []
+  let stats: any = null
+  
+  try {
+    [latestDisclosures, companies, stats] = await Promise.all([
+      disclosureAPI.getLatest(10),
+      companyAPI.getList({ limit: 5 }),
+      statsAPI.getOverview(),
+    ])
+  } catch (error) {
+    console.error('Error fetching homepage data:', error)
+  }
 
   return (
     <>
@@ -153,7 +161,7 @@ export default async function HomePage() {
             </div>
             
             {latestDisclosures.items.length > 0 ? (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {latestDisclosures.items.map((disclosure) => (
                   <DisclosureCard 
                     key={disclosure.id} 

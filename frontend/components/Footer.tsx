@@ -65,20 +65,13 @@ export default function Footer() {
         </div>
         
         {/* リンクエリア */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
             <h3 className="text-white font-medium mb-3">機能</h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="/disclosures" className="hover:text-white transition-colors">開示一覧</Link></li>
-              <li><Link href="/companies" className="hover:text-white transition-colors">企業一覧</Link></li>
+              <li><Link href="/stocks" className="hover:text-white transition-colors">企業一覧</Link></li>
               <li><Link href="/stats" className="hover:text-white transition-colors">統計情報</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-white font-medium mb-3">ヘルプ</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/about" className="hover:text-white transition-colors">このサイトについて</Link></li>
-              <li><Link href="/faq" className="hover:text-white transition-colors">よくある質問</Link></li>
             </ul>
           </div>
           <div>
@@ -107,10 +100,28 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-medium mb-3">法的情報</h3>
+            <h3 className="text-white font-medium mb-3">データソース</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/privacy" className="hover:text-white transition-colors">プライバシーポリシー</Link></li>
-              <li><Link href="/terms" className="hover:text-white transition-colors">利用規約</Link></li>
+              <li>
+                <Link 
+                  href="https://disclosure.edinet-fsa.go.jp/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  EDINET（金融庁）
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="https://www.tse.or.jp/listing/tdnet/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  東京証券取引所 TDnet
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

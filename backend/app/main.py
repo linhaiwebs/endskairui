@@ -9,7 +9,7 @@ import logging
 
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.api import disclosures, stocks
+from app.api import disclosures, stocks, stats
 
 # 配置日志
 logging.basicConfig(
@@ -91,6 +91,11 @@ app.include_router(
     prefix=settings.API_V1_STR
 )
 
+app.include_router(
+    stats.router,
+    prefix=settings.API_V1_STR
+)
+
 
 @app.get("/", tags=["根目录"])
 async def root():
@@ -107,7 +112,20 @@ async def health_check():
     """健康检查端点"""
     return {
         "status": "healthy",
-        "service": settings.PROJECT_NAME
+        "service": settings.PROJECT_NAME,
+        "version": "1.0.0",
+        "database": "connected"
+    }
+
+
+@app.get("/api/v1/health", tags=["健康检查"])
+async def health_check_v1():
+    """健康检查端点 (API v1)"""
+    return {
+        "status": "healthy",
+        "service": settings.PROJECT_NAME,
+        "version": "1.0.0",
+        "database": "connected"
     }
 
 

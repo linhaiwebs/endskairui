@@ -26,7 +26,7 @@ export default async function StocksPage({ searchParams }: StocksPageProps) {
   const companies = await companyAPI.getList({
     keyword,
     industry,
-    limit: 50,
+    limit: 500, // 增加到500个
   }).catch(() => [])
   
   // 获取行业列表

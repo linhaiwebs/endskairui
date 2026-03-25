@@ -1,9 +1,39 @@
-# https://www.robotstxt.org/robotstxt.html
+# robots.txt for 開示情報検索
+# 日本上場企業開示情報プラットフォーム
+
+# すべてのクローラーにアクセスを許可
 User-agent: *
 Allow: /
 
-# Sitemap
+# 内部APIとシステムパスへのアクセスを禁止
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# 広告プラットフォームのクローラーを許可（Google AdSense等）
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+# 主要検索エンジンのクロール頻度設定
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot
+Crawl-delay: 0
+
+User-agent: Slurp
+Crawl-delay: 1
+
+# その他のクローラーは1秒待機
+User-agent: *
+Crawl-delay: 1
+
+# サイトマップの場所
 Sitemap: https://jp-disclosure.com/sitemap.xml
 
-# 禁止访问API路径
-Disallow: /api/

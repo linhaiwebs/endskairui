@@ -1,0 +1,130 @@
+services:
+  # PostgreSQL数据库
+  db:
+    image: postgres:15-alpine
+    container_name: jp_disclosure_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: jp_disclosure_redis
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  # FastAPI后端
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jp_disclosure_backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - EDINET_API_KEY=${EDINET_API_KEY}
+      - SECRET_KEY=${SECRET_KEY}
+      - CORS_ORIGINS=https://${DOMAIN},https://www.${DOMAIN}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - backend_static:/app/static
+    networks:
+      - app-network
+    command: >
+      sh -c "
+        python scripts/init_db.py &&
+        gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --access-logfile - --error-logfile -
+      "
+
+  # Next.js前端
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=https://${DOMAIN}
+        - NEXT_PUBLIC_BASE_URL=https://${DOMAIN}
+    container_name: jp_disclosure_frontend
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=https://${DOMAIN}
+      - NEXT_PUBLIC_BASE_URL=https://${DOMAIN}
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # Nginx反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: jp_disclosure_nginx
+    restart: always
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf.template:ro
+      - ./nginx/logs:/var/log/nginx
+      - backend_static:/var/www/backend/static:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+    entrypoint: >
+      sh -c "envsubst '$${DOMAIN}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+
+  # 定时任务 - 每天获取EDINET数据
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jp_disclosure_scheduler
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - EDINET_API_KEY=${EDINET_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+    command: >
+      sh -c "
+        mkdir -p /etc/cron.d &&
+        echo '0 9,17 * * * root cd /app && python scripts/fetch_edinet.py 1 >> /var/log/cron.log 2>&1' > /etc/cron.d/fetch-edinet &&
+        chmod 0644 /etc/cron.d/fetch-edinet &&
+        cron -f
+      "
+
+volumes:
+  postgres_data:
+  redis_data:
+  backend_static:
+
+networks:
+  app-network:
+    driver: bridge
+

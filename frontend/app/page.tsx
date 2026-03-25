@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   // 並行してデータを取得
-  let latestDisclosures = { items: [], total: 0, page: 1, page_size: 10, total_pages: 0 }
+  let latestDisclosures: any = { items: [], total: 0, page: 1, page_size: 10, total_pages: 0 }
   let companies: any[] = []
   let stats: any = null
   

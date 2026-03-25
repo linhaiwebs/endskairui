@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 }
 
 export default async function StatsPage() {
-  let overview = null
-  let daily = null
+  let overview: any = null
+  let daily: any = null
   let hotCompanies: any[] = []
   
   try {
